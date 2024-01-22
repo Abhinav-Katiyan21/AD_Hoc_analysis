@@ -1,6 +1,5 @@
-<h1>
 Codebasics SQL Challenge
-Requests:<h1/>
+Requests:
 
 
 1. Provide the list of markets in which customer "Atliq Exclusive" operates its
@@ -37,10 +36,10 @@ business in the APAC region.
 
 4. Follow-up: Which segment had the most increase in unique products in
 2021 vs 2020? The final output contains these fields,
-segment
-product_count_2020
-product_count_2021
-difference
+A.segment
+B.product_count_2020
+C.product_count_2021
+D.difference
 
 
 with fy20 as (SELECT segment,count(distinct(p.product_code)) as product_count_2020
@@ -57,17 +56,17 @@ fy21 as (SELECT segment,count(distinct(p.product_code)) as product_count_2021
 	where fiscal_year=2021
 	group by p.segment)
 
-SELECT F.segment,F.PRODUCT_COUNT_2020,U.PRODUCT_COUNT_2021,U.PRODUCT_COUNT_2021-F.PRODUCT_COUNT_2020 AS DIFFERENCE
-FROM FY20 F
-JOIN FY21 U
-ON F.segment=U.segment
-ORDER BY DIFFERENCE desc
+	SELECT F.segment,F.PRODUCT_COUNT_2020,U.PRODUCT_COUNT_2021,U.PRODUCT_COUNT_2021-F.PRODUCT_COUNT_2020 AS DIFFERENCE
+	FROM FY20 F
+	JOIN FY21 U
+	ON F.segment=U.segment
+	ORDER BY DIFFERENCE desc
 
 5.Get the products that have the highest and lowest manufacturing costs.
 The final output should contain these fields,
 product_code
 product
-manufacturing_cost
+manufacturing_cost?
 
 	SELECT m.product_code, product, CONCAT(manufacturing_cost, '/unit') AS manufacturing_cost 
 	FROM fact_manufacturing_cost as m
@@ -84,14 +83,14 @@ customer_code
 customer
 average_discount_percentage?
 
-SELECT c.customer_code,c.customer,f.pre_invoice_discount_pct*100
-FROM dim_customer c
-JOIN fact_pre_invoice_deductions f
-on c.customer_code=f.customer_code
-where fiscal_year=2021 and c.market='India'
-order by pre_invoice_discount_pct desc
-limit 5;
-
+	SELECT c.customer_code,c.customer,f.pre_invoice_discount_pct*100
+	FROM dim_customer c
+	JOIN fact_pre_invoice_deductions f
+	on c.customer_code=f.customer_code
+	where fiscal_year=2021 and c.market='India'
+	order by pre_invoice_discount_pct desc
+	limit 5;
+	
 
 7. Get the complete report of the Gross sales amount for the customer “Atliq
 Exclusive” for each month. This analysis helps to get an idea of low and
@@ -101,21 +100,21 @@ Month
 Year
 Gross sales Amount?
 
-WITH sales AS (SELECT date, fm.customer_code, fp.fiscal_year, gross_price * sold_quantity AS gross_sales
- FROM fact_gross_price fp
-JOIN fact_sales_monthly fm
-ON fm.product_code = fp.product_code
-AND fm.fiscal_year = fp.fiscal_year),
-customer AS (SELECT date, c.customer_code, gross_sales 
-FROM sales s
-JOIN dim_customer c
-ON s.customer_code = c.customer_code
-WHERE customer = "Atliq Exclusive")
+	WITH sales AS (SELECT date, fm.customer_code, fp.fiscal_year, gross_price * sold_quantity AS gross_sales
+	 FROM fact_gross_price fp
+	JOIN fact_sales_monthly fm
+	ON fm.product_code = fp.product_code
+	AND fm.fiscal_year = fp.fiscal_year),
+	customer AS (SELECT date, c.customer_code, gross_sales 
+	FROM sales s
+	JOIN dim_customer c
+	ON s.customer_code = c.customer_code
+	WHERE customer = "Atliq Exclusive")
         
-SELECT MONTH(date) AS Month, YEAR(date) AS Year, ROUND(SUM(gross_sales) / 1000000, 2) AS Gross_sales_Amount_mln 
-FROM customer
-GROUP BY Month, Year
-order by year,Month;
+	SELECT MONTH(date) AS Month, YEAR(date) AS Year, ROUND(SUM(gross_sales) / 1000000, 2) AS Gross_sales_Amount_mln 
+	FROM customer
+	GROUP BY Month, Year
+	order by year,Month;
 
 
 8. In which quarter of 2020, got the maximum total_sold_quantity? The final
